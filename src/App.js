@@ -5,6 +5,7 @@ function App() {
   const [level, setLevel] = useState(0)
   const [highScore, setHighScore] = useState(0)
   const [numString, setNumString] = useState("")
+  const [showFinalScore, setShowFinalScore] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState(3)
   const [isTimeRunning, setIsTimeRunning] = useState(false)
   const [text, setText] = useState("")
@@ -18,6 +19,7 @@ function App() {
 
 
   function generateRandomNumber() {
+    setText("")
     let tempNumString = numString
     tempNumString = tempNumString + (Math.floor(Math.random() * 10)).toString()
     setLevel(level+1)
@@ -28,12 +30,12 @@ function App() {
   }
 
   function resetGame(){
-    setHighScore(level>highScore ? level : highScore)
+    setShowFinalScore(false)
     setLevel(0)
     setNumString("")
     setIsTimeRunning(false)
     setText("")
-    setIsGameRunning(false)
+    
   }
 
   function startGame(){
@@ -42,9 +44,14 @@ function App() {
     textBoxRef.current.focus()
   }
 
+  function endGame() {
+    setShowFinalScore(true)
+    setIsGameRunning(false)
+    setHighScore(level>highScore ? level : highScore)
+  }
+
   function submitAnswer(){
-    setText("")
-    text === numString ? generateRandomNumber() : resetGame()
+    text === numString ? generateRandomNumber() : endGame()
   }
 
   function readyForAnswer() {
@@ -70,11 +77,14 @@ function App() {
       <button onClick={startGame} disabled={isGameRunning}>Start Game</button><br />
 
       <textarea onChange={handleChange} value={text} ref={textBoxRef} disabled={isTimeRunning}/><br />
-      <button onClick={submitAnswer} disabled={isTimeRunning}>Submit Answer</button>
+      <button onClick={submitAnswer} disabled={(!isGameRunning||isTimeRunning)}>Submit Answer</button>
       <button onClick={resetGame}>Reset Game</button>
 
-      <p>{isTimeRunning ? numString : ""}</p>
-      <p>{isTimeRunning ? timeRemaining : ""}</p>
+      {isTimeRunning ? <div><p>{numString}</p><p>{timeRemaining}</p></div> : ""}
+     
+
+      {showFinalScore ? <div><p>Your text: text</p><p>{numString}</p></div> : ""}
+      
     </div>
   );
 }
