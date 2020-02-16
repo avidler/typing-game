@@ -1,4 +1,5 @@
 import React, {useState, useRef, useEffect} from "react"
+import axios from 'axios'
 
 function Game() {
     const [level, setLevel] = useState(0)
@@ -53,7 +54,16 @@ function Game() {
       setShowFinalScore(true)
       setIsGameRunning(false)
       setHighScore(level>highScore ? level : highScore)
+      let result = window.prompt("Please enter username", "Player 1")
+      const userScore= {
+        username: result,
+        score: level
+    }
 
+    console.log(userScore)
+
+    axios.post('http://localhost:5000/scoreboard/add', userScore)
+    .then(res => console.log(res.data))
     }
   
     function submitAnswer(){

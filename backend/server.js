@@ -21,7 +21,9 @@ connection.once('open', () => {
     console.log("MongoDB databse connection established successfully")
 })
 
-app.use('//scoreboard', scoreboardRouter)
+const scoreboardRouter = require("./routes/scoreboard")
+
+app.use('/scoreboard', scoreboardRouter)
 
 app.listen(port, () => {
     console.log(`Server is running on port:  ${port}`)
