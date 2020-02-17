@@ -10,7 +10,7 @@ function Scoreboard() {
     useEffect(() => {
         axios.get('http://localhost:5000/scoreboard/')
         .then(response => {
-            console.log(response.data)
+            console.log(response.data[response.data.length-1].score)
             setScorelist(response.data)
             
         })
@@ -26,7 +26,7 @@ function Scoreboard() {
     return(
         <div>
             <h1>Scoreboard</h1>
-            {scorelist.map((player, i) => <div key={i}>{player.username}: {player.score}</div>)}
+            {scorelist.map((player, index) => <div key={player._id}>{index+1} - {player.username}: {player.score}</div>)}
             
         </div>
     )

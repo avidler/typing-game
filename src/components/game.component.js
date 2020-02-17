@@ -1,13 +1,14 @@
 import React, {useState, useRef, useEffect} from "react"
 import axios from 'axios'
+import "bootstrap/dist/css/bootstrap.min.css"
 
 function Game() {
     const [level, setLevel] = useState(0)
-    const [highScore, setHighScore] = useState(0)
+    const [highScore, setHighScore] = useState()
     const [numString, setNumString] = useState("")
     const [finalNumString, setFinalNumString] = useState("")
     const [showFinalScore, setShowFinalScore] = useState(false)
-    const [timeRemaining, setTimeRemaining] = useState(3)
+    const [timeRemaining, setTimeRemaining] = useState(0)
     const [isTimeRunning, setIsTimeRunning] = useState(false)
     const [text, setText] = useState("")
     const [isGameRunning, setIsGameRunning] = useState(false)
@@ -26,7 +27,17 @@ function Game() {
         setNumString(tempNumString)
         setLevel(level+1)
         setIsTimeRunning(true)
-        setTimeRemaining(3)
+        setTimeRemaining(level+3)
+
+        var tCtx = document.getElementById('textCanvas').getContext('2d'),
+        imageElem = document.getElementById('image');
+    
+        
+        tCtx.canvas.width = tCtx.measureText(tempNumString).width+20;
+        tCtx.font = '22px Verdana'
+        tCtx.fillText(tempNumString, 5, 30);
+        imageElem.src = tCtx.canvas.toDataURL();
+        console.log(imageElem.src);
       
     }
 
@@ -40,7 +51,7 @@ function Game() {
   
    
     function startGame(){
-
+      
         resetGame()
         setIsGameRunning(true)
         textBoxRef.current.focus()
@@ -54,16 +65,25 @@ function Game() {
       setShowFinalScore(true)
       setIsGameRunning(false)
       setHighScore(level>highScore ? level : highScore)
-      let result = window.prompt("Please enter username", "Player 1")
-      const userScore= {
-        username: result,
-        score: level
-    }
+      
+    axios.get('http://localhost:5000/scoreboard/')
+        .then(response => {
+          console.log("Score to beat: ",response.data[response.data.length-1].score)
+          if (level > response.data[response.data.length-1].score){
+            let result = window.prompt("Please enter username", "Player 1")
+            const userScore= {
+              username: result,
+              score: level
+          }
 
-    console.log(userScore)
+          axios.post('http://localhost:5000/scoreboard/add', userScore)
+          .then(res => console.log(res.data))
+          }
+            
+        })
+    //console.log(userScore)
 
-    axios.post('http://localhost:5000/scoreboard/add', userScore)
-    .then(res => console.log(res.data))
+   
     }
   
     function submitAnswer(){
@@ -74,8 +94,24 @@ function Game() {
       setIsTimeRunning(false)
       textBoxRef.current.focus()
     }
+
+    function enterPressed(event) {
+      var code = event.keyCode || event.which;
+      if(code === 13) { submitAnswer()
+      } 
+  }
   
     useEffect(() => {
+      axios.get('http://localhost:5000/scoreboard/')
+      .then(response => {
+        console.log("Top score: ",response.data[0].score)
+         setHighScore(response.data[0].score) 
+          
+      })
+
+
+   
+
       if(isTimeRunning && timeRemaining > 0) {
           setTimeout(() => {
               setTimeRemaining(time => time - 1)
@@ -91,14 +127,31 @@ function Game() {
         <h2>High Score: {highScore}</h2>
         <h3>Level: {level}</h3>
         <button onClick={startGame} disabled={isGameRunning}>Start Game</button><br />
+        
+          <textarea 
+            onChange={handleChange} 
+            value={text} 
+            ref={textBoxRef} 
+            disabled={(!isGameRunning||isTimeRunning)}
+            onKeyPress={enterPressed}
+          />
+
+        <br />
+        <button 
+          onClick={submitAnswer} 
+          disabled={(!isGameRunning||isTimeRunning)}
+          
+        >
+          Submit Answer
+        </button>
+        <div>
+       <canvas id='textCanvas' height='40'></canvas>
+        {isTimeRunning ?  <img id='image'/> : <img id='image' width='0px'/>}
+        </div>
+     
   
-        <textarea onChange={handleChange} value={text} ref={textBoxRef} disabled={isTimeRunning}/><br />
-        <button onClick={submitAnswer} disabled={(!isGameRunning||isTimeRunning)}>Submit Answer</button>
-       
-  
-        {isTimeRunning ? <div><p>{numString}</p><p>{timeRemaining}</p></div> : ""}
-       
-  
+        {isTimeRunning ? <div id="generated-text "><p>{timeRemaining}</p></div> : ""}
+      
         {showFinalScore ? <div><p>Your text: {text}</p><p>{finalNumString}</p></div> : ""}
         
       </div>

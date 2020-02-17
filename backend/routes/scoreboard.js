@@ -2,7 +2,7 @@ const router = require('express').Router()
 let Scoreboard = require('../models/scoreboard.model')
 
 router.route('/').get((req, res) => {
-    Scoreboard.find()
+    Scoreboard.find().sort({ score: -1}).limit(10)
     .then(scores => res.json(scores))
     .catch(err => res.status(400).json('Error: ' + err))
 })
