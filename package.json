@@ -52,6 +52,6 @@
     "url": "https://github.com/avidler/typing-game/issues"
   },
   "homepage": "https://github.com/avidler/typing-game#readme",
-  
+  "proxy": "http://localhost:5000"
 }
 
