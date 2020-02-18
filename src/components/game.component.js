@@ -66,7 +66,7 @@ function Game() {
       setIsGameRunning(false)
       setHighScore(level>highScore ? level : highScore)
       
-    axios.get('http://localhost:5000/scoreboard/')
+    axios.get('/scoreboard/')
         .then(response => {
           console.log("Score to beat: ",response.data[response.data.length-1].score)
           if (level > response.data[response.data.length-1].score){
@@ -76,7 +76,7 @@ function Game() {
               score: level
           }
 
-          axios.post('http://localhost:5000/scoreboard/add', userScore)
+          axios.post('/scoreboard/add', userScore)
           .then(res => console.log(res.data))
           }
             
@@ -102,7 +102,7 @@ function Game() {
   }
   
     useEffect(() => {
-      axios.get('http://localhost:5000/scoreboard/')
+      axios.get('/scoreboard/')
       .then(response => {
         console.log("Top score: ",response.data[0].score)
          setHighScore(response.data[0].score) 

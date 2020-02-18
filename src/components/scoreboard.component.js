@@ -8,7 +8,7 @@ function Scoreboard() {
     const [scorelist, setScorelist] = useState([])
 
     useEffect(() => {
-        axios.get('http://localhost:5000/scoreboard/')
+        axios.get('/scoreboard/')
         .then(response => {
             console.log(response.data[response.data.length-1].score)
             setScorelist(response.data)
