@@ -11,7 +11,7 @@ The scoreboard displays the top 10 all time scores
 
 ## To Do List
 
-Improve the design of the app.
-Improve the scoreboard to include the date of the score.
-Better messages to explain whether the user achived a high score or didn't.
-Ensure that the same digit is not used consecutively when generating the number.
+Improve the design of the app.<br />
+Improve the scoreboard to include the date of the score.<br />
+Better messages to explain whether the user achived a high score or didn't.<br />
+Ensure that the same digit is not used consecutively when generating the number.<br />
