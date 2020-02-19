@@ -1,9 +1,0 @@
-{
-    "development": {
-    "host": "127.0.0.1:27017",
-    "dbName": "user-db"
-    },
-    "production": {
-    "env-variable": "mongodb+srv://master:password99@cluster0-j2gjt.mongodb.net/test?retryWrites=true&w=majority"
-    }
-    }
